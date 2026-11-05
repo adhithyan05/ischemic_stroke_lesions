@@ -1,0 +1,91 @@
+# =============================================================================
+# Domain Adaptation for Adult-to-Neonatal Brain Lesion Segmentation
+# Central Configuration File
+# =============================================================================
+
+# ── Paths ──────────────────────────────────────────────────────────────────
+paths:
+  project_root: "C:/ADHITHYAN/ischemic stroke lesions"
+
+  # ISLES 2022 dataset root
+  # Verified structure (250 subjects):
+  #   sub-strokecaseXXXX/ses-0001/
+  #     anat/sub-strokecaseXXXX_ses-0001_FLAIR.nii          <- actual file
+  #     dwi/sub-strokecaseXXXX_ses-0001_dwi.nii/            <- DIRECTORY containing real DWI .nii
+  #     dwi/sub-strokecaseXXXX_ses-0001_adc.nii             <- DIRECTORY (240 cases) OR flat file (10 cases)
+  #   derivatives/sub-strokecaseXXXX/ses-0001/sub-strokecaseXXXX_ses-0001_msk.nii
+  isles_root: "C:/ADHITHYAN/ischemic stroke lesions/ISLES-2022/ISLES-2022"
+
+  # BONBID-HIE dataset root
+  # Expected structure:
+  #   data/BONBID-HIE/
+  #     train/   (unlabelled neonatal images for DANN)
+  #     val/     (labelled neonatal validation subset)
+  #     test/    (independent test – do NOT touch until final evaluation)
+  bonbid_root: "C:/ADHITHYAN/ischemic stroke lesions/data/BONBID-HIE"
+
+  # Outputs
+  checkpoint_dir: "C:/ADHITHYAN/ischemic stroke lesions/outputs/checkpoints"
+  viz_dir:        "C:/ADHITHYAN/ischemic stroke lesions/outputs/visualizations"
+  log_dir:        "C:/ADHITHYAN/ischemic stroke lesions/outputs/logs"
+
+# ── Data ───────────────────────────────────────────────────────────────────
+data:
+  # ISLES 2022 MRI modalities to use (must match sub-folder / file suffix names)
+  isles_modalities: ["dwi", "adc", "flair"]
+  # BONBID-HIE modalities (will be auto-detected; adjust if needed)
+  bonbid_modalities: ["adc", "z-adc"]   # typical BONBID modalities
+
+  # Spatial resampling target (voxel spacing in mm, isotropic)
+  # Set to 2mm to match native DWI/ADC space (avoids upsampling artefacts)
+  target_spacing: [2.0, 2.0, 2.0]
+
+  # Patch / slice extraction
+  image_size: [128, 128]   # H x W for 2-D slice training (128 for CPU speed; raise to 256 for GPU)
+  num_slices_per_volume: 4  # slices sampled per volume; 4 = faster CPU epochs
+
+  # Train / val split for ISLES (fraction kept for internal validation)
+  isles_val_fraction: 0.15
+  random_seed: 42
+
+# ── Training ────────────────────────────────────────────────────────────────
+training:
+  batch_size: 4
+  num_epochs: 100
+  learning_rate: 1.0e-4
+  weight_decay: 1.0e-5
+  lr_scheduler: "cosine"     # "cosine" | "step" | "plateau"
+  warmup_epochs: 5
+
+  # Loss weights
+  dice_weight: 0.5
+  bce_weight: 0.5
+
+  # Augmentation
+  augment: true
+  aug_prob: 0.5              # probability per augmentation
+
+  # Early stopping
+  patience: 20               # epochs without improvement
+  min_delta: 1.0e-4
+
+  # Device – auto-detected; override here if needed ("cpu" | "cuda" | "mps")
+  device: "auto"
+
+  # Gradient clipping
+  grad_clip: 1.0
+
+# ── U-Net Architecture ───────────────────────────────────────────────────
+unet:
+  in_channels: 3             # must match len(isles_modalities)
+  out_channels: 1
+  base_features: 16          # 16 for CPU (fast); raise to 32 for GPU training
+  depth: 4                   # number of encoder / decoder levels
+  bilinear: true             # true = bilinear upsample (faster on CPU than transposed conv)
+  dropout: 0.1
+
+# ── Evaluation ───────────────────────────────────────────────────────────
+evaluation:
+  threshold: 0.5             # sigmoid threshold for binary prediction
+  metrics: ["dice", "iou", "precision", "recall", "sensitivity"]
+  save_n_vis: 10             # number of cases to visualise after evaluation

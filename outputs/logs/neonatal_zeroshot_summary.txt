@@ -1,0 +1,55 @@
+======================================================================================
+       ADULT U-NET ZERO-SHOT EVALUATION ON NEONATAL BONBID-HIE (PHASE 3)
+======================================================================================
+
+Evaluation Timestamp : 2026-11-02T09:50:25
+Checkpoint Evaluated : baseline_unet_best.pth (SHA-256 verified unchanged)
+Trained Domain       : Adult ISLES 2022 (Focal Ischemic Stroke, DWI + ADC + FLAIR)
+Evaluated Cohort     : Neonatal BONBID-HIE Validation Split (4 held-out subjects)
+Channel Mapping      : primary_adc_z_z ([ADC, Z-ADC, Z-ADC])
+Inference Mode       : Zero-shot (model.eval(), no fine-tuning, no weight updates)
+
+── 1. COHORT SUMMARY METRICS (Mean ± Std) ──────────────────────────────────────────
+  • DICE        : 0.1451 ± 0.1658  (Range: 0.0418 – 0.4320)
+  • IOU         : 0.0879 ± 0.1084  (Range: 0.0213 – 0.2755)
+  • PRECISION   : 0.1473 ± 0.1531  (Range: 0.0218 – 0.4016)
+  • RECALL      : 0.3253 ± 0.1868  (Range: 0.0292 – 0.5018)
+  • SENSITIVITY : 0.3253 ± 0.1868  (Range: 0.0292 – 0.5018)
+  • SPECIFICITY : 0.9782 ± 0.0137  (Range: 0.9621 – 0.9999)
+
+  • Empty Ground Truth Masks : 0 / 4
+  • Empty Predictions        : 0 / 4
+
+── 2. PER-SUBJECT DETAILED RESULTS ─────────────────────────────────────────────────
+Subject        | GT Vox   | Pred Vox | Dice    | IoU     | Prec    | Recall  | Spec   
+--------------------------------------------------------------------------------------
+MGHNICU_001    |      342 |       75 |  0.0480 |  0.0246 |  0.1333 |  0.0292 |  0.9999
+MGHNICU_002    |    24480 |    28498 |  0.4320 |  0.2755 |  0.4016 |  0.4675 |  0.9743
+MGHNICU_302    |     2168 |    20173 |  0.0587 |  0.0303 |  0.0325 |  0.3026 |  0.9766
+MGHNICU_436    |     1650 |    37986 |  0.0418 |  0.0213 |  0.0218 |  0.5018 |  0.9621
+--------------------------------------------------------------------------------------
+
+── 3. CHANNEL MAPPING SENSITIVITY COMPARISON ──────────────────────────────────────
+Because the adult model was trained with 3 channels [DWI, ADC, FLAIR] and BONBID-HIE
+only provides ADC and Z-ADC, multiple input adaptation strategies were compared:
+
+Mapping Strategy         | Mean Dice      | Mean IoU       | Rationale & Pathology
+--------------------------------------------------------------------------------------
+primary_adc_z_z          | 0.1451 ± 0.1658 | 0.0879 ± 0.1084 | Verified Phase 2 pipeline
+zero_pad_dwi_flair       | 0.0000 ± 0.0000 | 0.0000 ± 0.0000 | [0, ADC, 0] (Silences encoder)
+triplicate_adc           | 0.0000 ± 0.0000 | 0.0000 ± 0.0000 | [ADC, ADC, ADC]
+surrogate_z_adc_dwi      | 0.4088 ± 0.2549 | 0.2869 ± 0.1882 | [-Z_ADC, ADC, 0]
+--------------------------------------------------------------------------------------
+
+── 4. CLINICAL & DOMAIN GAP INTERPRETATION ─────────────────────────────────────────
+1. Domain Shift Impact: The adult baseline model achieved a mean Dice of 0.1451 on the
+   neonatal cohort without adaptation, down from 0.2673 on the adult ISLES validation split.
+2. Lesion Burden Sensitivity: For large, severe neonatal HIE infarcts (e.g. MGHNICU_002,
+   24,480 voxels), zero-shot performance reached Dice = 0.4320 (IoU = 0.2755). However, for
+   smaller, focal injuries (MGHNICU_001, 342 voxels), Dice was limited to 0.0480.
+3. Missing Modality Gap: Adult stroke features are heavily anchored on DWI hyperintensity.
+   Without raw DWI, directly zero-padding DWI extinguishes model activations (Dice = 0.0000),
+   whereas feeding Z-ADC across auxiliary channels preserves diffusion feature flow.
+4. Readiness for Domain Adaptation: This zero-shot evaluation establishes the exact
+   quantitative lower-bound benchmark for Phase 4 (DANN domain adaptation).
+======================================================================================

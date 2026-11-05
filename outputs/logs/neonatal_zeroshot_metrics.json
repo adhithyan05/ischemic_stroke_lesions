@@ -1,0 +1,272 @@
+{
+  "evaluation_phase": "Phase 3: Zero-Shot Neonatal Evaluation",
+  "cohort": {
+    "split": "val",
+    "num_subjects": 4,
+    "subjects": [
+      "MGHNICU_001",
+      "MGHNICU_002",
+      "MGHNICU_302",
+      "MGHNICU_436"
+    ]
+  },
+  "model": {
+    "checkpoint": "C:\\ADHITHYAN\\ischemic stroke lesions\\outputs\\checkpoints\\baseline_unet_best.pth",
+    "checkpoint_sha256": "6f9469aa01629ce220757ced31a0e9ace0c32f40145668f6fb36dcd2bb62be05",
+    "architecture": "Attention U-Net (in=3, out=1, base=16, depth=4)",
+    "trained_domain": "Adult ISLES 2022 (DWI, ADC, FLAIR)",
+    "target_domain": "Neonatal BONBID-HIE (ADC, Z-ADC)",
+    "evaluated_in_eval_mode": true,
+    "weights_frozen": true
+  },
+  "preprocessing": {
+    "target_spacing_mm": [
+      2.0,
+      2.0,
+      2.0
+    ],
+    "image_size": [
+      128,
+      128
+    ],
+    "threshold": 0.5,
+    "primary_channel_mapping": "primary_adc_z_z",
+    "mri_interpolation": "linear (order=1)",
+    "mask_interpolation": "nearest-neighbour (order=0)"
+  },
+  "empty_mask_counts": {
+    "num_empty_ground_truth": 0,
+    "num_empty_predictions": 0,
+    "convention_doc": "If GT=0 and Pred=0 -> Dice=1.0. If GT=0 and Pred>0 -> Dice=0.0. If GT>0 and Pred=0 -> Dice=0.0."
+  },
+  "summary_metrics": {
+    "dice": {
+      "mean": 0.14512408215071493,
+      "std": 0.1657552345573368,
+      "min": 0.041780199818336416,
+      "max": 0.43202838914258146
+    },
+    "iou": {
+      "mean": 0.08792261386039286,
+      "std": 0.10836408501968546,
+      "min": 0.02133580705008727,
+      "max": 0.2755332980208322
+    },
+    "precision": {
+      "mean": 0.1473053977334199,
+      "std": 0.1531134859274335,
+      "min": 0.021797504343699838,
+      "max": 0.401572040143027
+    },
+    "recall": {
+      "mean": 0.32528115846388683,
+      "std": 0.18677699491845748,
+      "min": 0.02923976608101638,
+      "max": 0.5018181818151405
+    },
+    "sensitivity": {
+      "mean": 0.32528115846388683,
+      "std": 0.18677699491845748,
+      "min": 0.02923976608101638,
+      "max": 0.5018181818151405
+    },
+    "specificity": {
+      "mean": 0.9782348135707428,
+      "std": 0.013669786436128588,
+      "min": 0.9621373765781089,
+      "max": 0.9999173122670305
+    }
+  },
+  "per_subject_metrics": [
+    {
+      "subject": "MGHNICU_001",
+      "native_shape": [
+        128,
+        128,
+        16
+      ],
+      "native_spacing": [
+        1.25,
+        1.25,
+        6.0
+      ],
+      "metrics": {
+        "dice": 0.04796163069429348,
+        "iou": 0.024570024569420885,
+        "precision": 0.13333333331555558,
+        "recall": 0.02923976608101638,
+        "sensitivity": 0.02923976608101638,
+        "specificity": 0.9999173122670305,
+        "tp": 10,
+        "fp": 65,
+        "fn": 332,
+        "tn": 786025,
+        "gt_voxels": 342,
+        "pred_voxels": 75,
+        "empty_gt": false,
+        "empty_pred": false
+      }
+    },
+    {
+      "subject": "MGHNICU_002",
+      "native_shape": [
+        128,
+        128,
+        21
+      ],
+      "native_spacing": [
+        1.5625,
+        1.5625,
+        4.0
+      ],
+      "metrics": {
+        "dice": 0.43202838914258146,
+        "iou": 0.2755332980208322,
+        "precision": 0.401572040143027,
+        "recall": 0.467483660130528,
+        "sensitivity": 0.467483660130528,
+        "specificity": 0.9743026423646123,
+        "tp": 11444,
+        "fp": 17054,
+        "fn": 13036,
+        "tn": 646594,
+        "gt_voxels": 24480,
+        "pred_voxels": 28498,
+        "empty_gt": false,
+        "empty_pred": false
+      }
+    },
+    {
+      "subject": "MGHNICU_302",
+      "native_shape": [
+        128,
+        128,
+        51
+      ],
+      "native_spacing": [
+        2.0,
+        2.0,
+        2.0
+      ],
+      "metrics": {
+        "dice": 0.05872610894764839,
+        "iou": 0.03025132580123115,
+        "precision": 0.032518713131397155,
+        "recall": 0.30258302582886265,
+        "sensitivity": 0.30258302582886265,
+        "specificity": 0.9765819230732194,
+        "tp": 656,
+        "fp": 19517,
+        "fn": 1512,
+        "tn": 813899,
+        "gt_voxels": 2168,
+        "pred_voxels": 20173,
+        "empty_gt": false,
+        "empty_pred": false
+      }
+    },
+    {
+      "subject": "MGHNICU_436",
+      "native_shape": [
+        160,
+        144,
+        20
+      ],
+      "native_spacing": [
+        1.375,
+        1.375,
+        6.0
+      ],
+      "metrics": {
+        "dice": 0.041780199818336416,
+        "iou": 0.02133580705008727,
+        "precision": 0.021797504343699838,
+        "recall": 0.5018181818151405,
+        "sensitivity": 0.5018181818151405,
+        "specificity": 0.9621373765781089,
+        "tp": 828,
+        "fp": 37158,
+        "fn": 822,
+        "tn": 944232,
+        "gt_voxels": 1650,
+        "pred_voxels": 37986,
+        "empty_gt": false,
+        "empty_pred": false
+      }
+    }
+  ],
+  "channel_mapping_comparison": {
+    "primary_adc_z_z": {
+      "mean_dice": 0.14512408215071493,
+      "std_dice": 0.1657552345573368,
+      "mean_iou": 0.08792261386039286,
+      "std_iou": 0.10836408501968546,
+      "per_subject_dice": {
+        "MGHNICU_001": 0.04796163069429348,
+        "MGHNICU_002": 0.43202838914258146,
+        "MGHNICU_302": 0.05872610894764839,
+        "MGHNICU_436": 0.041780199818336416
+      },
+      "per_subject_pred_voxels": {
+        "MGHNICU_001": 75,
+        "MGHNICU_002": 28498,
+        "MGHNICU_302": 20173,
+        "MGHNICU_436": 37986
+      }
+    },
+    "zero_pad_dwi_flair": {
+      "mean_dice": 0.0,
+      "std_dice": 0.0,
+      "mean_iou": 0.0,
+      "std_iou": 0.0,
+      "per_subject_dice": {
+        "MGHNICU_001": 0.0,
+        "MGHNICU_002": 0.0,
+        "MGHNICU_302": 0.0,
+        "MGHNICU_436": 0.0
+      },
+      "per_subject_pred_voxels": {
+        "MGHNICU_001": 0,
+        "MGHNICU_002": 0,
+        "MGHNICU_302": 0,
+        "MGHNICU_436": 0
+      }
+    },
+    "triplicate_adc": {
+      "mean_dice": 0.0,
+      "std_dice": 0.0,
+      "mean_iou": 0.0,
+      "std_iou": 0.0,
+      "per_subject_dice": {
+        "MGHNICU_001": 0.0,
+        "MGHNICU_002": 0.0,
+        "MGHNICU_302": 0.0,
+        "MGHNICU_436": 0.0
+      },
+      "per_subject_pred_voxels": {
+        "MGHNICU_001": 0,
+        "MGHNICU_002": 0,
+        "MGHNICU_302": 0,
+        "MGHNICU_436": 0
+      }
+    },
+    "surrogate_z_adc_dwi": {
+      "mean_dice": 0.4087974109460079,
+      "std_dice": 0.2548590395813188,
+      "mean_iou": 0.2868728378195576,
+      "std_iou": 0.18820007874712666,
+      "per_subject_dice": {
+        "MGHNICU_001": 0.0,
+        "MGHNICU_002": 0.571211856000767,
+        "MGHNICU_302": 0.6660904638413538,
+        "MGHNICU_436": 0.39788732394191073
+      },
+      "per_subject_pred_voxels": {
+        "MGHNICU_001": 0,
+        "MGHNICU_002": 9798,
+        "MGHNICU_302": 1303,
+        "MGHNICU_436": 622
+      }
+    }
+  }
+}

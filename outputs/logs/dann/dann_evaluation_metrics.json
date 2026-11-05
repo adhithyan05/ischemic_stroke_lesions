@@ -1,0 +1,108 @@
+{
+  "phase": "Phase 4: DANN Evaluation",
+  "checkpoint": "outputs\\checkpoints\\dann\\dann_unet_best.pth",
+  "summary_metrics": {
+    "dice": {
+      "mean": 0.14185679977306143,
+      "std": 0.1001205599975001
+    },
+    "iou": {
+      "mean": 0.07964594259633968,
+      "std": 0.06131655323626481
+    },
+    "precision": {
+      "mean": 0.14809691452036197,
+      "std": 0.1572233286267903
+    },
+    "recall": {
+      "mean": 0.3082189371167776,
+      "std": 0.17053169865003343
+    },
+    "sensitivity": {
+      "mean": 0.3082189371167776,
+      "std": 0.17053169865003343
+    },
+    "specificity": {
+      "mean": 0.986127970728631,
+      "std": 0.008960259798551227
+    }
+  },
+  "per_subject_metrics": [
+    {
+      "subject": "MGHNICU_001",
+      "metrics": {
+        "dice": 0.12881355932057836,
+        "iou": 0.06884057970931352,
+        "precision": 0.10497237568867454,
+        "recall": 0.16666666666179336,
+        "sensitivity": 0.16666666666179336,
+        "specificity": 0.9993817501812642,
+        "tp": 57,
+        "fp": 486,
+        "fn": 285,
+        "tn": 785604,
+        "gt_voxels": 342,
+        "pred_voxels": 543,
+        "empty_gt": false,
+        "empty_pred": false
+      }
+    },
+    {
+      "subject": "MGHNICU_002",
+      "metrics": {
+        "dice": 0.30906290115524804,
+        "iou": 0.18277610761890536,
+        "precision": 0.4159640635795328,
+        "recall": 0.2458741830064355,
+        "sensitivity": 0.2458741830064355,
+        "specificity": 0.9872658397222475,
+        "tp": 6019,
+        "fp": 8451,
+        "fn": 18461,
+        "tn": 655197,
+        "gt_voxels": 24480,
+        "pred_voxels": 14470,
+        "empty_gt": false,
+        "empty_pred": false
+      }
+    },
+    {
+      "subject": "MGHNICU_302",
+      "metrics": {
+        "dice": 0.05824062253020959,
+        "iou": 0.029993738259217285,
+        "precision": 0.03354106855259888,
+        "recall": 0.220940959408575,
+        "sensitivity": 0.220940959408575,
+        "specificity": 0.9834392428270997,
+        "tp": 479,
+        "fp": 13802,
+        "fn": 1689,
+        "tn": 819614,
+        "gt_voxels": 2168,
+        "pred_voxels": 14281,
+        "empty_gt": false,
+        "empty_pred": false
+      }
+    },
+    {
+      "subject": "MGHNICU_436",
+      "metrics": {
+        "dice": 0.07131011608620978,
+        "iou": 0.036973344797922546,
+        "precision": 0.037910150260641706,
+        "recall": 0.5993939393903067,
+        "sensitivity": 0.5993939393903067,
+        "specificity": 0.9744250501839129,
+        "tp": 989,
+        "fp": 25099,
+        "fn": 661,
+        "tn": 956291,
+        "gt_voxels": 1650,
+        "pred_voxels": 26088,
+        "empty_gt": false,
+        "empty_pred": false
+      }
+    }
+  ]
+}

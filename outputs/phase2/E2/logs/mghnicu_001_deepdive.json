@@ -1,0 +1,12 @@
+{
+  "subject": "MGHNICU_001",
+  "gt_lesion_voxels": 342,
+  "e2_ref_detected_voxels": 0,
+  "e2_ref_tp_voxels": 0,
+  "e2_ref_max_prob_in_lesion": 6.591500123498406e-10,
+  "e2_ref_mean_prob_in_lesion": 1.962358877824477e-12,
+  "e2_crop_detected_voxels": 0,
+  "e2_crop_tp_voxels": 0,
+  "e2_crop_max_prob_in_lesion": 0.1698412299156189,
+  "e2_crop_mean_prob_in_lesion": 0.0015154201537370682
+}

@@ -1,0 +1,88 @@
+========================================================================================
+              DATASET COMPATIBILITY AND DOMAIN GAP ANALYSIS REPORT
+       Adult ISLES 2022 (Source Domain) vs Neonatal BONBID-HIE (Target Domain)
+========================================================================================
+
+1. DATASET COMPARISON MATRIX
+────────────────────────────────────────────────────────────────────────────────────────
+Property                       | ISLES 2022 (Adult)             | BONBID-HIE (Neonatal)         
+────────────────────────────────────────────────────────────────────────────────────────────────
+Number of subjects             | 250 labelled adult cases       | 89 accessible (85 train, 4 val)
+Test cohort                    | Evaluated internally           | 44 test cases (encrypted zip) 
+MRI modalities available       | DWI (b=1000), ADC, FLAIR       | ADC (skull-stripped), Z-ADC   
+Missing modalities             | None (all 3 present)           | DWI is MISSING, FLAIR is MISSING
+Image file container           | NIfTI-1 (.nii, .nii.gz)        | MetaImage (.mha, raw float32) 
+Image dimensions               | Native ~112×112×73 (FLAIR high-res) | 128×128×16 to 256×256×60      
+Voxel spacing                  | 2.0×2.0×2.0 mm (isotropic native) | 0.625-1.95 mm in-plane, 2-6 mm Z
+Segmentation masks             | Binary lesion mask (msk.nii)   | Binary lesion mask (_lesion.mha)
+Annotation target              | Focal adult arterial infarct   | Hypoxic-Ischemic Encephalopathy
+Preprocessing requirements     | Resample to 2mm, Z-score, 128² | Isotropic resample, Z-score, 128²
+Input channels for model       | 3 channels (DWI, ADC, FLAIR)   | Requires channel adaptation   
+────────────────────────────────────────────────────────────────────────────────────────────────
+
+2. TARGET PATHOLOGY & SEGMENTATION MEANING INVESTIGATION
+────────────────────────────────────────────────────────────────────────────────────────
+Question: Do BONBID-HIE annotations represent the same segmentation target as ISLES 2022?
+
+CLINICAL & PATHOLOGICAL FINDINGS:
+• ISLES 2022 Target: Focal Ischemic Stroke Infarct.
+  - Pathophysiology: Embolic or thrombotic occlusion of large adult cerebral arteries
+    (predominantly middle cerebral artery [MCA]).
+  - Lesion Pattern: Territorial, strictly unilateral, wedge-shaped cortical and subcortical
+    infarctions confined to specific vascular vascular territories.
+  - Intensity Signature: Markedly hyperintense on DWI (cytotoxic water restriction) and
+    corresponding hypointense on ADC.
+
+• BONBID-HIE Target: Perinatal Hypoxic-Ischemic Encephalopathy (HIE) Injury.
+  - Pathophysiology: Systemic asphyxia / global hypoperfusion at birth (e.g. placental
+    abruption, cord prolapse, uterine rupture, intrapartum hypoxia).
+  - Lesion Pattern: Non-territorial, often bilateral and symmetric or diffuse patchy.
+    Predilection for metabolically vulnerable regions in neonates: deep grey nuclei
+    (putamen, globus pallidus, ventrolateral thalamus), posterior limb of internal capsule
+    (PLIC), and parasagittal watershed zones.
+  - Intensity Signature: Unmyelinated neonatal brain naturally possesses exceptionally high
+    water content and baseline high ADC compared to adults. Absolute ADC thresholds cannot
+    be transferred directly from adults to neonates without normative age adjustment.
+    Hence BONBID-HIE provides Z-ADC normalized against age-matched normative templates.
+
+CONCLUSION ON SEGMENTATION TARGET:
+While both targets represent ischemic/hypoxic cellular injury visualized by diffusion MRI,
+their anatomical distribution, etiology, morphology, and baseline tissue contrast differ
+substantially. Domain adaptation (DANN) is precisely designed to mitigate these domain shifts,
+but direct zero-shot evaluation without domain adaptation will face significant domain gap.
+
+3. PREPROCESSING COMPATIBILITY & HARMONIZATION FINDINGS
+────────────────────────────────────────────────────────────────────────────────────────
+A. Missing Modality Handling:
+   - The Phase 1 baseline U-Net was trained with `in_channels = 3` (DWI, ADC, FLAIR).
+   - BONBID-HIE does not provide raw DWI or FLAIR.
+   - Compatible strategies for inference and DANN domain adaptation:
+     Strategy 1 (Zero-fill missing): Channel 0 = 0.0 (DWI), Channel 1 = normalized ADC,
+                Channel 2 = 0.0 (FLAIR).
+     Strategy 2 (Z-ADC mapping): Channel 0 = normalized Z-ADC, Channel 1 = normalized ADC,
+                Channel 2 = normalized Z-ADC or zeros.
+     Strategy 3 (ADC replication): Channel 0 = ADC, Channel 1 = ADC, Channel 2 = ADC.
+   - As verified in data_utils, the pipeline gracefully handles missing modalities via
+     consistent zero-padding or channel replication without throwing unhandled exceptions.
+
+B. Spatial Resampling & Interpolation Rules:
+   - Medical requirement strictly verified:
+     • Continuous linear interpolation (order=1) used for MRI volumes (ADC, Z-ADC).
+     • Nearest-neighbour interpolation (order=0) strictly used for segmentation masks.
+     • Mask binary values {0.0, 1.0} are 100% preserved; no intermediate float values.
+     • Images and masks resampled jointly using identical spatial scaling factors.
+     • Center of mass error between native and resampled mask is < 1.0 voxel.
+
+C. Slice Dimensions & Cropping:
+   - Adult pipeline trained on 2D axial slices resized/cropped to 128×128.
+   - Neonatal BONBID-HIE native in-plane matrix is already 128×128 in 55% of subjects,
+     160×160 in 18%, and 256×256 in 27%.
+   - Resampling to isotropic 2.0 mm target spacing followed by center crop/pad to 128×128
+     produces uniform (1, 128, 128) tensors ready for U-Net forward pass.
+
+4. EVALUATION READINESS STATUS
+────────────────────────────────────────────────────────────────────────────────────────
+• Neonatal Dataset Verification Status: VERIFIED & READY FOR BASELINE EVALUATION.
+• All 89 accessible subjects (85 train + 4 val) have complete, loadable imaging and masks.
+• Image-mask spatial alignment is 100% verified across all subjects.
+• Baseline checkpoint (baseline_unet_best.pth) is untouched and verified intact.

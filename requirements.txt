@@ -1,0 +1,35 @@
+# =============================================================================
+# Domain Adaptation: Adult-to-Neonatal Brain Lesion Segmentation
+# Python Dependencies
+# =============================================================================
+
+# Core Deep Learning
+torch>=2.1.0
+torchvision>=0.16.0
+
+# Medical Image I/O & Neuroimaging Formats
+nibabel>=5.1.0
+SimpleITK>=2.3.0
+
+# Scientific Computing & Data Processing
+numpy>=1.24.0
+scipy>=1.10.0
+scikit-learn>=1.3.0
+pandas>=2.0.0
+openpyxl>=3.1.0
+psutil>=5.9.0
+
+# Visualization & Plotting
+matplotlib>=3.7.0
+seaborn>=0.12.0
+plotly>=5.18.0
+
+# Interactive Web Application
+streamlit>=1.30.0
+
+# Configuration & Utilities
+pyyaml>=6.0
+tqdm>=4.65.0
+
+# Testing & Verification
+pytest>=7.4.0
